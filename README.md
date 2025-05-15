@@ -56,6 +56,57 @@ def create_table():
     );
     """
     postgres_hook.run(create_table_query)
+```
+Creates the table **apod_data** if it doesn't already exist.
 
+## 📘 DAG Configuration Parameters
 
+Here are the key parameters used in the Airflow DAG:
+
+- **`dag_id`**: Name of the DAG.
+- **`start_date`**: Starts one day before today.
+- **`schedule='@daily'`**: Runs the DAG daily.
+- **`catchup=False`**: Skips historical backfilling and runs only for the current date onward.
+
+---
+## 🌐 2. Extract Data from NASA API
+
+  ```python
+  
+  extract_apod = HttpOperator(
+    task_id='extract_apod',
+    http_conn_id='nasa_api',
+    endpoint='planetary/apod?api_key={{ conn.nasa_api.extra_dejson.api_key }}',
+    method='GET',
+    response_filter=lambda response: response.text,
+    log_response=True,
+    do_xcom_push=True)
+  
+   ```
+## 🚀 API Extraction with `HttpOperator`
+
+- Uses **Airflow’s `HttpOperator`** to call NASA’s APOD API.
+- The `{{ conn.nasa_api.extra_dejson.api_key }}` dynamically reads the API key stored in your **Airflow connection**.
+- The response is **logged** and **pushed to XCom** for downstream tasks.
+
+✅ **Tip**: We can also use `response.json()` if you prefer handling the result as a Python dictionary.
+
+##  🔁 3. Transform API Data
+
+```python
+
+@task
+def transform_apod_data(response_text):
+    response = json.loads(response_text)
+    return {
+        'title': response.get('title', ''),
+        'explanation': response.get('explanation', ''),
+        'url': response.get('url', ''),
+        'date': response.get('date', ''),
+        'media_type': response.get('media_type', '')
+    }
+
+```
+- Parses raw response text into a **Python dictionary**.
+- Extracts and structures only the **required fields**.
 
