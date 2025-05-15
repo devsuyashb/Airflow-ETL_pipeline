@@ -38,13 +38,24 @@ This DAG does the following:
 
 ---
 
-## 🗂 Project Structure
 
-```text
-.
-├── dags/
-│   └── ETL_pipeline.py       # The main Airflow DAG
-├── README.md                 # Project documentation
+## 🔧 1. Create PostgreSQL Table
+
+```python
+@task
+def create_table():
+    postgres_hook = PostgresHook(postgres_conn_id='my_postgres_connection')
+    create_table_query = """
+    CREATE TABLE IF NOT EXISTS apod_data (
+        id SERIAL PRIMARY KEY,
+        title VARCHAR(255),
+        explanation TEXT,
+        url TEXT,
+        date DATE,
+        media_type VARCHAR(50)
+    );
+    """
+    postgres_hook.run(create_table_query)
 
 
 
