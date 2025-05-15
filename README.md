@@ -6,7 +6,7 @@ This project defines an Apache Airflow DAG that performs a daily ETL (Extract, T
 
 ## 📋 Table of Contents
 
-- [Overview](#overview)
+- [Overview](#Overview)
 - [Technologies Used](#technologies-used)
 - [Project Structure](#project-structure)
 - [Airflow DAG Breakdown](#airflow-dag-breakdown)
@@ -110,3 +110,32 @@ def transform_apod_data(response_text):
 - Parses raw response text into a **Python dictionary**.
 - Extracts and structures only the **required fields**.
 
+## 🗃 4. Load Data into PostgreSQL
+
+```Python
+
+@task
+def load_data_to_postgres(apod_data):
+    postgres_hook = PostgresHook(postgres_conn_id='my_postgres_connection')
+    insert_query = """
+    INSERT INTO apod_data (title, explanation, url, date, media_type)
+    VALUES (%s, %s, %s, %s, %s);
+    """
+    postgres_hook.run(insert_query, parameters=(
+        apod_data['title'],
+        apod_data['explanation'],
+        apod_data['url'],
+        apod_data['date'],
+        apod_data['media_type']
+    ))
+
+```
+- Inserts transformed data into your **PostgreSQL** table using **PostgresHook**.
+
+## 🔗 Task Dependencies
+
+```python
+create_table() >> extract_apod
+transformed = transform_apod_data(extract_apod.output)
+load_data_to_postgres(transformed)
+```
