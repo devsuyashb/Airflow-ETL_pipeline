@@ -4,18 +4,6 @@ This project defines an Apache Airflow DAG that performs a daily ETL (Extract, T
 
 ---
 
-## 📋 Table of Contents
-
-- [Overview](#Overview)
-- [Technologies Used](#technologies-used)
-- [Project Structure](#project-structure)
-- [Airflow DAG Breakdown](#airflow-dag-breakdown)
-- [How to Use](#how-to-use)
-- [Connection Setup](#connection-setup)
-- [Example Output](#example-output)
-- [License](#license)
-
----
 
 ## 📖 Overview
 
