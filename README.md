@@ -139,3 +139,11 @@ create_table() >> extract_apod
 transformed = transform_apod_data(extract_apod.output)
 load_data_to_postgres(transformed)
 ```
+# ✅ Summary (ETL Flow)
+
+| Step      | Task                   | Description                          |
+|-----------|------------------------|--------------------------------------|
+| Extract   | `extract_apod`         | Pull NASA's APOD data via API        |
+| Transform | `transform_apod_data`  | Parse and clean JSON response        |
+| Load      | `load_data_to_postgres`| Save parsed data into PostgreSQL     |
+
